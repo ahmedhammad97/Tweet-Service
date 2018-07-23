@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <button type="button" name="show-button" v-if="!showTweets" v-on:click="show">Show All Tweets</button>
+      <button type="button" name="hide-button" v-if="showTweets" v-on:click="hide">Hide Tweets</button>
+      <br /><br />
+      <input type="text" name="tweet" value="" v-model="message">
+      <button type="submit" name="button" v-on:click="submitTweet">Post</button>
+      <br /><br /><br />
+      <ul>
+        <li v-show="showTweets" v-for="tweet in tweets" >{{tweet.body}}</li>
+      </ul>
+    </div>
+  </body>
+
+  <script type="text/javascript">
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+        message : "",
+        tweets : [],
+        showTweets : false
+      },
+      methods : {
+        submitTweet : function(){
+            axios.post('posts', {tweet: this.message}).then(result=>{
+              this.tweets = [{body: this.message}],
+              this.showTweets = true;
+              this.showButton = false;
+            });
+        },
+        show : function(){
+          axios.get('/oldPosts').then(result=>{
+            this.tweets = result.data;
+            this.showTweets = true;
+            this.showButton = false;
+          });
+        },
+        hide : function(){
+          this.showTweets = false;
+          this.showButton = true;
+        }
+      }
+    })
+  </script>
+</html>
